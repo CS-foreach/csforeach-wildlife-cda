@@ -11,6 +11,34 @@ st.set_page_config(
     layout="wide",
 )
 
+st.markdown(
+    """
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    <style>
+    * {
+        font-family: 'Lato', sans-serif !important;
+    }
+    h1, h2, h3, h4,
+    h1 *, h2 *, h3 *,
+    [data-testid="stHeading"],
+    [data-testid="stHeading"] *,
+    [data-testid="stHeadingWithActionElements"],
+    [data-testid="stHeadingWithActionElements"] * {
+        font-family: 'Cinzel', serif !important;
+        letter-spacing: 0.03em;
+    }
+
+    /* Remove rounded corners from st.info */
+    div[data-testid="stAlert"],
+    div[data-testid="stAlert"] > div {
+        border-radius: 0 !important;
+    }
+
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
+
 # ── Load & clean data ─────────────────────────────────────────────────────────
 @st.cache_data
 def load_data():
