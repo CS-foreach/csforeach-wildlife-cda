@@ -119,27 +119,28 @@ st.markdown(
     "Each pin is a recorded sighting. **Red = invasive Brown Widow**, **Blue = native Western Black Widow**."
 )
 
-map_center = [df["latitude"].mean(), df["longitude"].mean()]
-mymap = folium.Map(
-    location=map_center,
-    zoom_start=10,
-    tiles="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
-    attr="Tiles © Esri",
-)
+with st.spinner("Loading geographic distribution…"):
+    map_center = [df["latitude"].mean(), df["longitude"].mean()]
+    mymap = folium.Map(
+        location=map_center,
+        zoom_start=10,
+        tiles="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+        attr="Tiles © Esri",
+    )
 
-for _, row in df.iterrows():
-    species = row["scientific_name"]
-    folium.CircleMarker(
-        location=[row["latitude"], row["longitude"]],
-        radius=4,
-        color=SPECIES_COLORS[species],
-        fill=True,
-        fill_opacity=0.7,
-        popup=f"{SPECIES_LABELS[species]}<br>{row['observed_on'].date()}",
-        tooltip=SPECIES_LABELS[species],
-    ).add_to(mymap)
+    for _, row in df.iterrows():
+        species = row["scientific_name"]
+        folium.CircleMarker(
+            location=[row["latitude"], row["longitude"]],
+            radius=4,
+            color=SPECIES_COLORS[species],
+            fill=True,
+            fill_opacity=0.7,
+            popup=f"{SPECIES_LABELS[species]}<br>{row['observed_on'].date()}",
+            tooltip=SPECIES_LABELS[species],
+        ).add_to(mymap)
 
-st_folium(mymap, use_container_width=True, height=500, returned_objects=[])
+    st_folium(mymap, use_container_width=True, height=500, returned_objects=[])
 
 st.divider()
 
@@ -245,3 +246,22 @@ st.markdown(
     direct competitive relationship.
     """
 )
+
+# ── Project resources ────────────────────────────────────────────────────────
+st.subheader("Project Resources")
+
+# Add the published Google Colab notebook URL here when it is ready.
+COLAB_NOTEBOOK_URL = "https://colab.research.google.com/drive/1mfBMnLSYCbBx6kZKLxRUf4EPsGnBUbe9?usp=sharing"
+
+if COLAB_NOTEBOOK_URL:
+    st.markdown(f"[Open the Google Colab notebook]({COLAB_NOTEBOOK_URL})")
+else:
+    st.caption("Google Colab notebook link: add the notebook URL here when it is ready.")
+
+with open("data/observations-spiders.csv", "rb") as data_file:
+    st.download_button(
+        label="Download the observation data (CSV)",
+        data=data_file,
+        file_name="observations-spiders.csv",
+        mime="text/csv",
+    )
