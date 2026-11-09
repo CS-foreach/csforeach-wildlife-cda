@@ -142,6 +142,10 @@ with st.spinner("Loading geographic distribution…"):
 
     st_folium(mymap, use_container_width=True, height=500, returned_objects=[])
 
+st.markdown(
+    "You may notice how some spider observations happened in the ocean. These data points that don't initially make sense are often called outliers. It is up to the data analyst to decide whether to exclude these outlier points or develop an explanation. In this situation, there may have been spider observations on boats, explaining these in-water observations."
+)
+
 st.divider()
 
 # ── Charts ────────────────────────────────────────────────────────────────────
