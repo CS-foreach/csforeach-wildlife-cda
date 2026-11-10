@@ -90,11 +90,14 @@ st.info(
 )
 
 # ── Spider photos ─────────────────────────────────────────────────────────────
-img_col1, img_col2 = st.columns(2)
-with img_col1:
-    st.image("images/brown_widow.png", caption="🔴 Brown Widow — Latrodectus geometricus (Invasive)", use_container_width=True)
-with img_col2:
-    st.image("images/western_black_widow.png", caption="🔵 Western Black Widow — Latrodectus hesperus (Native)", use_container_width=True)
+st.warning("Spider photos ahead. If you have arachnophobia or are afraid of spiders, you may want to leave these images hidden.")
+show_spider_photos = st.checkbox("I’m comfortable viewing spider photos — show them")
+if show_spider_photos:
+    img_col1, img_col2 = st.columns(2)
+    with img_col1:
+        st.image("images/brown_widow.png", caption="🔴 Brown Widow — Latrodectus geometricus (Invasive)", use_container_width=True)
+    with img_col2:
+        st.image("images/western_black_widow.png", caption="🔵 Western Black Widow — Latrodectus hesperus (Native)", use_container_width=True)
 
 st.divider()
 
@@ -119,6 +122,22 @@ st.markdown(
     "Each pin is a recorded sighting. **Red = invasive Brown Widow**, **Blue = native Western Black Widow**."
 )
 
+min_map_year = int(df["observed_on"].dt.year.min())
+max_map_year = int(df["observed_on"].dt.year.max())
+selected_map_years = st.slider(
+    "Years shown on map",
+    min_value=min_map_year,
+    max_value=max_map_year,
+    value=(min_map_year, max_map_year),
+    step=1,
+)
+map_df = df[
+    df["observed_on"].dt.year.between(selected_map_years[0], selected_map_years[1])
+]
+st.caption(
+    f"Showing {len(map_df):,} observations from {selected_map_years[0]}–{selected_map_years[1]}."
+)
+
 with st.spinner("Loading geographic distribution…"):
     map_center = [df["latitude"].mean(), df["longitude"].mean()]
     mymap = folium.Map(
@@ -128,7 +147,7 @@ with st.spinner("Loading geographic distribution…"):
         attr="Tiles © Esri",
     )
 
-    for _, row in df.iterrows():
+    for _, row in map_df.iterrows():
         species = row["scientific_name"]
         folium.CircleMarker(
             location=[row["latitude"], row["longitude"]],
